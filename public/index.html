@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HaulOps Fleet Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark">H</span>
+        <div>
+          <strong>HaulOps</strong>
+          <small>Fleet Control</small>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="trucks">Trucks</button>
+        <button class="nav-item" data-view="diesel">Diesel</button>
+        <button class="nav-item" data-view="maintenance">Maintenance</button>
+        <button class="nav-item" data-view="tires">Tires</button>
+        <button class="nav-item" data-view="drivers">Drivers</button>
+        <button class="nav-item" data-view="expenses">Expenses</button>
+        <button class="nav-item" data-view="reports">Reports</button>
+        <button class="nav-item" data-view="alerts">Alerts</button>
+        <button class="nav-item" data-view="analytics">Analytics</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-button mobile-only" id="menuToggle" aria-label="Open navigation">☰</button>
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Twenty-truck operating snapshot for June 2026</p>
+        </div>
+        <div class="top-actions">
+          <label class="search">
+            <span>Search</span>
+            <input id="globalSearch" type="search" placeholder="Truck, driver, model...">
+          </label>
+          <button class="button secondary" id="themeToggle">Dark mode</button>
+          <button class="button primary" id="addPrimary">Add truck</button>
+        </div>
+      </header>
+
+      <section class="view active" id="dashboardView">
+        <div class="metric-grid" id="metricGrid"></div>
+        <div class="content-grid">
+          <section class="panel wide">
+            <div class="panel-head">
+              <h2>Revenue and Expense Summary</h2>
+              <select id="chartMode">
+                <option value="monthly">Monthly</option>
+                <option value="category">By category</option>
+              </select>
+            </div>
+            <canvas id="financeChart" height="290"></canvas>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Fleet Status</h2>
+            </div>
+            <canvas id="statusChart" height="290"></canvas>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Priority Alerts</h2>
+              <button class="text-button" data-view-link="alerts">View all</button>
+            </div>
+            <div class="stack" id="priorityAlerts"></div>
+          </section>
+          <section class="panel wide">
+            <div class="panel-head">
+              <h2>Fuel Efficiency Leaders</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Truck</th><th>Driver</th><th>Status</th><th>KM/L</th><th>Revenue</th><th>Cost / KM</th></tr></thead>
+                <tbody id="efficiencyRows"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="trucksView">
+        <div class="section-tools">
+          <div class="filter-group">
+            <select id="statusFilter">
+              <option value="all">All statuses</option>
+              <option>Active</option>
+              <option>Maintenance</option>
+              <option>Idle</option>
+            </select>
+            <select id="modelFilter">
+              <option value="all">All models</option>
+            </select>
+          </div>
+          <button class="button primary" data-open-form="truck">Add truck</button>
+        </div>
+        <div class="table-wrap panel-like">
+          <table>
+            <thead><tr><th>Truck</th><th>Registration</th><th>Model</th><th>Year</th><th>Driver</th><th>Odometer</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="truckRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="dieselView">
+        <div class="section-tools">
+          <h2>Fuel Filling Records</h2>
+          <button class="button primary" data-open-form="fuel">Record fuel</button>
+        </div>
+        <div class="content-grid">
+          <section class="panel wide"><canvas id="fuelChart" height="280"></canvas></section>
+          <section class="panel"><div class="stack" id="fuelSummary"></div></section>
+        </div>
+        <div class="table-wrap panel-like">
+          <table>
+            <thead><tr><th>Date</th><th>Truck</th><th>Liters</th><th>Cost/L</th><th>Total</th><th>Efficiency</th></tr></thead>
+            <tbody id="fuelRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="maintenanceView">
+        <div class="section-tools">
+          <h2>Maintenance Management</h2>
+          <button class="button primary" data-open-form="maintenance">Add service record</button>
+        </div>
+        <div class="table-wrap panel-like">
+          <table>
+            <thead><tr><th>Truck</th><th>Service</th><th>Last Done</th><th>Next Due</th><th>Cost</th><th>Vendor</th><th>Status</th></tr></thead>
+            <tbody id="maintenanceRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="tiresView">
+        <div class="section-tools">
+          <h2>Tire Inventory and Lifespan</h2>
+          <button class="button primary" data-open-form="tire">Add tire record</button>
+        </div>
+        <div class="table-wrap panel-like">
+          <table>
+            <thead><tr><th>Truck</th><th>Position</th><th>Brand</th><th>Installed</th><th>Condition</th><th>Rotation Due</th><th>Cost</th><th>Lifespan</th></tr></thead>
+            <tbody id="tireRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="driversView">
+        <div class="section-tools">
+          <h2>Driver Management</h2>
+          <button class="button primary" data-open-form="driver">Add driver</button>
+        </div>
+        <div class="table-wrap panel-like">
+          <table>
+            <thead><tr><th>Name</th><th>Phone</th><th>License</th><th>Expiry</th><th>Assigned Truck</th><th>Score</th><th>On-time</th></tr></thead>
+            <tbody id="driverRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="expensesView">
+        <div class="section-tools">
+          <h2>Expense Management</h2>
+          <button class="button primary" data-open-form="expense">Add expense</button>
+        </div>
+        <div class="content-grid">
+          <section class="panel wide"><canvas id="expenseChart" height="280"></canvas></section>
+          <section class="panel"><div class="stack" id="expenseSummary"></div></section>
+        </div>
+        <div class="table-wrap panel-like">
+          <table>
+            <thead><tr><th>Date</th><th>Category</th><th>Truck</th><th>Description</th><th>Amount</th></tr></thead>
+            <tbody id="expenseRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="reportsView">
+        <div class="section-tools">
+          <div class="filter-group">
+            <select id="reportPeriod">
+              <option>Daily</option>
+              <option>Weekly</option>
+              <option selected>Monthly</option>
+              <option>Annual</option>
+            </select>
+            <select id="reportType">
+              <option>Fleet Summary</option>
+              <option>Diesel Report</option>
+              <option>Maintenance Report</option>
+              <option>Expense Report</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <button class="button secondary" id="exportCsv">Excel export</button>
+            <button class="button secondary" id="exportJson">Data export</button>
+            <button class="button secondary" id="printReport">PDF / Print</button>
+          </div>
+        </div>
+        <section class="panel report-sheet" id="reportSheet"></section>
+      </section>
+
+      <section class="view" id="alertsView">
+        <div class="section-tools">
+          <h2>Alerts and Notifications</h2>
+          <button class="button secondary" id="acknowledgeAlerts">Mark reviewed</button>
+        </div>
+        <div class="alert-grid" id="alertGrid"></div>
+      </section>
+
+      <section class="view" id="analyticsView">
+        <div class="content-grid">
+          <section class="panel wide">
+            <div class="panel-head"><h2>Cost and Revenue Per Truck</h2></div>
+            <canvas id="truckProfitChart" height="310"></canvas>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h2>Fleet Utilization</h2></div>
+            <div class="gauge"><span id="utilizationGauge">0%</span></div>
+          </section>
+          <section class="panel wide">
+            <div class="panel-head"><h2>Maintenance Trend</h2></div>
+            <canvas id="maintenanceTrendChart" height="280"></canvas>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="recordDialog">
+    <form method="dialog" id="recordForm">
+      <div class="dialog-head">
+        <h2 id="dialogTitle">Add record</h2>
+        <button class="icon-button" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="form-grid" id="formFields"></div>
+      <menu>
+        <button class="button secondary" value="cancel">Cancel</button>
+        <button class="button primary" id="saveRecord" value="default">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
